@@ -1,0 +1,30 @@
+{
+  "name": "node-app",
+  "version": "1.0.0",
+  "main": "src/app.ts",
+  "license": "MIT",
+  "scripts": {
+    "start:dev": "npx nodemon",
+    "dev:server:start": "npx nodemon server:start",
+    "dev:messages:consumer": "npx nodemon messages:consumer",
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node dist/app.js"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "^20.12.4",
+    "@types/winston": "^2.4.4",
+    "nodemon": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.4"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
+    "inversify": "^6.0.2",
+    "reflect-metadata": "^0.2.2",
+    "winston": "^3.13.0"
+  }
+}
