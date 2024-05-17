@@ -3,28 +3,39 @@
   "version": "1.0.0",
   "main": "src/app.ts",
   "license": "MIT",
+  "type": "commonjs",
   "scripts": {
     "start:dev": "npx nodemon",
     "dev:server:start": "npx nodemon server:start",
-    "dev:messages:consumer": "npx nodemon messages:consumer",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node dist/app.js"
+    "start": "npm run build && node dist/app.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "npm run typeorm migration:run -- -d ./src/infrastructure/database/pgsql-data-source.ts",
+    "migration:generate": "npm run typeorm -- migration:generate  ./src/infrastructure/database/migrations/migrations -d ./src/infrastructure/database/pgsql-data-source.ts",
+    "migration:create": "npm run typeorm -- migration:create ./src/infrastructure/database/migrations/migrations",
+    "migration:revert": "npm run typeorm -- -d ./src/infrastructure/database/pgsql-data-source.ts migration:revert",
+    "migration:show": "npm run typeorm -- migration:show -d ./src/infrastructure/database/pgsql-data-source.ts"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.5",
-    "@types/node": "^20.12.4",
-    "@types/winston": "^2.4.4",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^16.11.10",
+    "@types/uuid": "^9.0.8",
     "nodemon": "^3.1.0",
     "rimraf": "^5.0.5",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.4"
+    "ts-node": "10.9.1",
+    "typescript": "4.5.2"
   },
   "dependencies": {
-    "amqplib": "^0.10.3",
     "commander": "^12.0.0",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "inversify": "^6.0.2",
-    "reflect-metadata": "^0.2.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.4.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "0.3.20",
+    "uuid": "^9.0.1",
     "winston": "^3.13.0"
   }
 }

@@ -3,19 +3,31 @@
 import "reflect-metadata";
 import { program } from 'commander';
 import { container } from "./config/container.config";
-import { MessagesConsumerCommand } from "./cli/consumers/messages-consumer.command";
-import { WebServerCommand } from "./cli/web-server.command";
+import { DataSource } from "typeorm";
+import { Logger } from "./infrastructure/logger";
+import { ServerStartCommand } from "./cli/server-start.command";
 
-program.name('CLI AppConfig')
-  .description('CLI')
-  .version('1.0.0');
+async function app() {
+  program.name('CLI WA Pre-Heater')
+    .description('CLI')
+    .version('1.0.0');
 
-program.command(MessagesConsumerCommand.COMMAND).action(async (options) => {
-  await container.get(MessagesConsumerCommand).execute();
-});
+  const logger = container.get(Logger);
 
-program.command(WebServerCommand.COMMAND).action(async (options) => {
-  await container.get(WebServerCommand).execute();
-});
+  logger.debug('Register CLI commands');
+  container.get(ServerStartCommand).register(program);
 
-program.parse(process.argv);
+  logger.debug('Initialize DB connection');
+
+  await container.get(DataSource).initialize().then(() => {
+    logger.debug('Data Source has been initialized!');
+  }).catch((err) => {
+    logger.error(`Error during Data Source initialization: ${err.message}`);
+  });
+
+  await program.parseAsync(process.argv);
+
+  await container.get(DataSource).destroy();
+}
+
+app();
