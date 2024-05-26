@@ -6,9 +6,12 @@
   "type": "commonjs",
   "scripts": {
     "start:dev": "npx nodemon",
-    "dev:server:start": "npx nodemon server:start",
+    "dev:server:start:http": "npx nodemon server:start",
+    "dev:server:start:https": "npx nodemon server:start -S",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/app.js",
+    "server:start:http": "npm run build && node dist/app.js server:start",
+    "server:start:https": "npm run build && node dist/app.js server:start -S",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:run": "npm run typeorm migration:run -- -d ./src/infrastructure/database/pgsql-data-source.ts",
     "migration:generate": "npm run typeorm -- migration:generate  ./src/infrastructure/database/migrations/migrations -d ./src/infrastructure/database/pgsql-data-source.ts",

@@ -1,4 +1,6 @@
 import { injectable } from "inversify";
+import https from 'https';
+import http from 'http';
 import express, { Express, Request, Response } from "express";
 import { AppConfig } from "../config/app.config";
 import { Logger } from "../infrastructure/logger";
@@ -8,6 +10,7 @@ import HealthCheckController from "../http/controller/api/health-check.controlle
 import { DataSource } from "typeorm";
 import AuthJwtMiddleware from "../http/middleware/auth-jwt.middleware";
 import LogMiddleware from "../http/middleware/log.middleware";
+import * as fs from "node:fs";
 
 @injectable()
 class ServerStartCommand {
@@ -19,13 +22,16 @@ class ServerStartCommand {
 
   public register(program: Command): void {
     program.command('server:start')
+      .option('-S, --https', 'Secure')
       .description('Start HTTP/HTTPS server')
-      .action(async () => {
-        await this.execute();
+      .action(async (args) => {
+        const https = Boolean(args.https);
+
+        await this.execute(https);
       });
   }
 
-  public async execute(): Promise<void> {
+  public async execute(secured: boolean): Promise<void> {
     const app: Express = express();
 
     container.get(LogMiddleware).bind(app);
@@ -52,8 +58,30 @@ class ServerStartCommand {
     app.use(apiPublicRouter);
     app.use(apiPrivateRouter);
 
-    app.listen(this.appConfig.appPort.getValue(), this.appConfig.appHost, () => {
-      this.logger.info(`Server is running at http://${this.appConfig.appHost}:${this.appConfig.appPort.getValue()}`);
+    let server: http.Server | https.Server;
+
+    if (secured) {
+      if (undefined === this.appConfig.sslKeyPath) {
+        throw new Error('SSL key path not defined');
+      }
+
+      if (undefined === this.appConfig.sslCertPath) {
+        throw new Error('SSL crt path not defined');
+      }
+
+      server = https.createServer({
+        key: fs.readFileSync(this.appConfig.sslKeyPath),
+        cert: fs.readFileSync(this.appConfig.sslCertPath),
+        minVersion: "TLSv1.2",
+      }, app);
+    } else {
+      server = http.createServer({}, app);
+    }
+
+    server.listen(this.appConfig.appPort.getValue(), this.appConfig.appHost, () => {
+      const protocol = secured ? 'https' : 'http';
+
+      this.logger.info(`Server is running at ${protocol}://${this.appConfig.appHost}:${this.appConfig.appPort.getValue()}`);
     });
   }
 }

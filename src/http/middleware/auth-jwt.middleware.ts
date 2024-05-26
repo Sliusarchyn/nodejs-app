@@ -28,7 +28,7 @@ export default class AuthJwtMiddleware extends Middleware {
 
     const token = req.header('Authorization');
     if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({error: 'Unauthorized'});
     }
 
     try {
@@ -39,7 +39,7 @@ export default class AuthJwtMiddleware extends Middleware {
       req.sub = decoded.sub;
       next();
     } catch (error) {
-      res.status(401).json({ error: 'Invalid token' });
+      res.status(401).json({error: 'Invalid token'});
     }
   }
 }
