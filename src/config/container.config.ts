@@ -9,6 +9,7 @@ import HealthCheckController from "../http/controller/api/health-check.controlle
 import { JwtConfig } from "./jwt.config";
 import AuthJwtMiddleware from "../http/middleware/auth-jwt.middleware";
 import LogMiddleware from "../http/middleware/log.middleware";
+import { SecretGenerateCommand as JwtSecretGenerateCommand } from "../cli/helper/jwt/secret-generate.command";
 
 const container = new Container();
 
@@ -50,6 +51,7 @@ container.bind<DataSource>(DataSource).toDynamicValue((context: interfaces.Conte
 
 //Commands
 container.bind<ServerStartCommand>(ServerStartCommand).to(ServerStartCommand);
+container.bind<JwtSecretGenerateCommand>(JwtSecretGenerateCommand).to(JwtSecretGenerateCommand);
 
 //Controllers
 container.bind<HealthCheckController>(HealthCheckController).to(HealthCheckController).inRequestScope();

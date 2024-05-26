@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "start:dev": "npx nodemon",
+    "dev:jwt:secret-generate": "ts-node src/app.ts jwt:secret-generate",
     "dev:server:start:http": "npx nodemon server:start",
     "dev:server:start:https": "npx nodemon server:start -S",
     "build": "rimraf ./dist && tsc",

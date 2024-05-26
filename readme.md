@@ -15,6 +15,12 @@ cp .env.example .env
 ```
 Then update values for your environment.
 
+P.S.:
+To generate `JWT_SECRET` value might be used next command:
+```shell
+yarn run dev:jwt:secret-generate
+```
+
 ---
 
 ## How to run:

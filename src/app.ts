@@ -6,6 +6,7 @@ import { container } from "./config/container.config";
 import { DataSource } from "typeorm";
 import { Logger } from "./infrastructure/logger";
 import { ServerStartCommand } from "./cli/server-start.command";
+import { SecretGenerateCommand as JwtSecretGenerateCommand } from "./cli/helper/jwt/secret-generate.command";
 
 async function app() {
   program.name('CLI WA Pre-Heater')
@@ -16,6 +17,7 @@ async function app() {
 
   logger.debug('Register CLI commands');
   container.get(ServerStartCommand).register(program);
+  container.get(JwtSecretGenerateCommand).register(program);
 
   logger.debug('Initialize DB connection');
 
